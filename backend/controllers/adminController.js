@@ -1,0 +1,201 @@
+import User from "../schema/userSchema.js";
+// const User = require("../schema/userSchema.js");
+// const UserGroup = require("../schema/usergroupsSchema.js");
+import UserGroup from "../schema/usergroupsSchema.js";
+import Role from "../schema/roleSchema.js";
+// const Role = require("../schema/roleSchema.js")
+
+
+import Log from '../schema/logSchema.js';
+
+//create admin user
+
+
+export const getAllLogs = async (req, res) => {
+  try {
+    // Get the page and limit from query parameters
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    // Calculate total number of logs
+    const totalLogs = await Log.countDocuments();
+
+    // Fetch logs with pagination and sort them by the most recent
+    const logs = await Log.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      logs,
+      totalLogs,
+      page,
+      totalPages: Math.ceil(totalLogs / limit),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch logs' });
+  }
+};
+
+export const createCustomUser = async (req, res) => {
+  const { uname, email, phonenumber, password,userGroup } = req.body;
+
+  if (!uname || !email || !password || !phonenumber) {
+    return res.status(400).json({ error: "Please enter all the inputs" });
+  }
+  try {
+    const usergrp = await UserGroup.findOne({name:userGroup});
+    if(!usergrp){
+      return res.status(400).json({error:"This user group is not existing"});
+    }
+    const preuser = await User.findOne({ email: email });
+    if (preuser) {
+      return res.status(400).json({ error: "This user already exists in our organization" });
+    } else {
+      const userregister = new User({ uname, email, phonenumber, password,userGroup:userGroup });
+      const storedata = await userregister.save();
+      res.status(200).json(storedata);
+    }
+  } catch (error) {
+    res.status(400).json({ error: "Invalid details", error });
+  }
+};
+
+export const deleteUser = async(req,res)=>{
+  const {email} = req.body;
+  try{
+    const user = await User.findOneAndDelete({email:email});
+    return res.status(400).json(user);
+  }
+  catch(error){
+    return res.status(400).json({error:"unable to find the user"});
+  }
+}
+
+export const updateUserGroup = async(req,res)=>{
+  const {email,usergrp} = req.body;
+  try{ 
+    const userp = UserGroup.findOne({name:usergrp});
+    if(!userp){
+      return res.status(400).json({error:"invalid usergrp"});
+    }
+    updates={}
+    updates.userGroup = userp;
+    const user=User.findOneAndUpdate({email:email},updates,{new: true});
+    if(!user){
+      return res.status(400).json({error:"invalid user"});
+    }
+    return res.status(200).json(user);
+  }
+  catch{
+    return res.status(400).json({error:"invalid data"});
+  }
+}
+
+
+
+
+// Create Role
+export const createRole = async (req, res) => {    
+  const { name, permissions } = req.body;
+  try {
+    const existingRole = await Role.findOne({ name });
+    if (existingRole) {
+      return res.status(400).json({ error: "This role already exists in our database" });
+    }
+    const newRole = new Role({ name, permissions });
+    const savedRole = await newRole.save();
+    return res.status(201).json(savedRole);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error creating role', details: error.message });
+  }
+};
+
+// Update Role
+export const updateRole = async (req, res) => {
+  const { id } = req.params;
+  const { name, permissions } = req.body;
+
+  try {
+    const role = await Role.findById(id);
+    if (!role) {
+      return res.status(400).json({ error: 'Role not found' });
+    }
+    if(name){role.name=name;}
+    // role.name = name || role.name;
+    if(permissions){role.permissions = permissions;}
+    role.permissions = permissions || role.permissions;
+
+    const updatedRole = await role.save();
+    return res.status(200).json(updatedRole);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating role', details: error.message });
+  }
+};
+
+// Create User Group
+export const createUserGroups = async (req, res) => {
+  const { name, roles, description } = req.body;
+
+  try {
+    const existingUserGroup = await UserGroup.findOne({ name:name });
+
+    if (existingUserGroup) {
+      return res.status(400).json({ error: "This user group already exists in our database" });
+    }
+
+    const roleIds = roles.map(roleId => roleId);
+    const validRolesCount = await Role.countDocuments({ roleId: { $in: roleIds } });
+
+    if (validRolesCount !== roleIds.length) {
+      return res.status(400).json({ error: 'Invalid or non-existent role(s) referenced in user group.' });
+    }
+
+    const newUserGroup = new UserGroup({ name, roles, description });
+    const savedUserGroup = await newUserGroup.save();
+    return res.status(201).json(savedUserGroup);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error creating user group', details: error.message });
+  }
+};
+
+// Update User Group
+export const updateusergrp = async (req, res) => {
+  const { id } = req.params;
+  const { name, roles, description } = req.body;
+
+  try {
+    const userGroup = await UserGroup.findById(id);
+    if (!userGroup) {
+      return res.status(400).json({ error: 'User group not found' });
+    }
+
+    const roleIds = roles.map(roleId => roleId);
+    const validRolesCount = await Role.countDocuments({ roleId: { $in: roleIds } });
+
+    if (validRolesCount !== roleIds.length) {
+      return res.status(400).json({ error: 'Invalid or non-existent role(s) referenced in user group.' });
+    }
+
+    userGroup.name = name || userGroup.name;
+    userGroup.roles = roles || userGroup.roles;
+    userGroup.description = description || userGroup.description;
+
+    const updatedUserGroup = await userGroup.save();
+    return res.status(200).json(updatedUserGroup);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating user group', details: error.message });
+  }
+};
+
+
+export const getAllUsers = async (req,res)=>{
+  try{
+    const users = await User.find();
+    if(!users) return res.status(400).json({message:"users not found"});
+    return res.status(200).json(users);
+  }
+  catch(error){
+    return res.status(500).json({"error":error.message})
+  } 
+};

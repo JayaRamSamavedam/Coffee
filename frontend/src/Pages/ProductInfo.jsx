@@ -102,7 +102,7 @@ const ProductInfo = () => {
     setEditingReviewRating(review.rating);
   };
 
-  const handleEditReview = async (reviewId, newText, newRating) => {
+  const handleEditReview = async (reviewId,email, newText, newRating) => {
     if (!user.loggedIn) {
       setvisible(true);
       setRedirectPath(location);
@@ -111,7 +111,7 @@ const ProductInfo = () => {
       
         const response = await Request('POST', '/user/editreview', {
           id: reviewId,
-          email: user.details.email,
+          email: email,
           productId: product.productId,
           text: newText,
           rating: newRating,
@@ -130,7 +130,7 @@ const ProductInfo = () => {
     }
   };
 
-  const handleDeleteReview = async (reviewId) => {
+  const handleDeleteReview = async (reviewId,email) => {
     if (!user.loggedIn) {
       setvisible(true);
       setRedirectPath(location);
@@ -138,7 +138,7 @@ const ProductInfo = () => {
       try {
        
         const response = await Request('POST', '/user/delete-review', {
-          email: user.details.email,
+          email: email,
           productId: product.productId,
           id: reviewId,
         });
@@ -272,7 +272,7 @@ const ProductInfo = () => {
               actions={
                 (user.details.email === review.email || user.details.userGroup === 'admin') ? [
                   <Button onClick={() => handleEditClick(review)}>Edit</Button>,
-                  <Button onClick={() => handleDeleteReview(review._id)}>Delete</Button>
+                  <Button onClick={() => handleDeleteReview(review._id,review.email)}>Delete</Button>
                 ] : null
               }
             >
@@ -290,7 +290,7 @@ const ProductInfo = () => {
                     onChange={(e) => setEditingReviewText(e.target.value)}
                     className="mb-4"
                   />
-                  <Button type="primary" onClick={() => handleEditReview(review._id, editingReviewText, editingReviewRating)}>
+                  <Button type="primary" onClick={() => handleEditReview(review._id,review.email, editingReviewText, editingReviewRating)}>
                     Save Changes
                   </Button>
                   <Button onClick={() => setEditingReviewId(null)}>

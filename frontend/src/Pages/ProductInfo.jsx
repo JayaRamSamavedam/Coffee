@@ -45,10 +45,15 @@ const ProductInfo = () => {
   }, [id, navigate]);
 
   const fetchReviews = async () => {
+    if (!user.loggedIn) {
+      setvisible(true);
+      setRedirectPath(location);
+    }
+    else{
     try {
-      setloading(true);
+      
       const response = await Request('GET', `/prod/getByProduct/${product.productId}`);
-     setloading(false);
+     
       if (response.status === 200) {
         setReviews(response.data.review || []);
         if (response.data.error) {
@@ -57,7 +62,7 @@ const ProductInfo = () => {
       }
     } catch (error) {
       toast.error('Failed to load reviews');
-    }
+    }}
   };
 
   const handleAddReview = async () => {
@@ -71,14 +76,14 @@ const ProductInfo = () => {
         return;
       }
       try {
-        setloading(true);
+        
         const response = await Request('POST', '/user/create-review', {
           email: user.email,
           productId: product.productId,
           text: newReview,
           rating: newRating,
         });
-        setloading(false);
+        
         if (response.status === 200) {
           toast.success('Review added');
           fetchReviews();
@@ -103,7 +108,7 @@ const ProductInfo = () => {
       setRedirectPath(location);
     } else {
       try {
-        setloading(true);
+      
         const response = await Request('POST', '/user/editreview', {
           id: reviewId,
           email: user.details.email,
@@ -111,7 +116,7 @@ const ProductInfo = () => {
           text: newText,
           rating: newRating,
         });
-        setloading(false);
+        
         if (response.status === 200) {
           toast.success('Review updated');
           fetchReviews();
@@ -131,13 +136,13 @@ const ProductInfo = () => {
       setRedirectPath(location);
     } else {
       try {
-        setloading(true);
+       
         const response = await Request('POST', '/user/delete-review', {
           email: user.details.email,
           productId: product.productId,
           id: reviewId,
         });
-        setloading(false);
+        
         if (response.status === 200) {
           toast.success('Review deleted');
           fetchReviews();

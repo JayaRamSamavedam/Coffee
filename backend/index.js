@@ -47,7 +47,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-    origin:['https://coffee-frontend-kappa.vercel.app'], // specify your allowed origins
+    origin:['https://coffee-frontend-kappa.vercel.app','http://localhost:3000'], // specify your allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 };

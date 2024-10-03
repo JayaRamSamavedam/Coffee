@@ -4,9 +4,7 @@ import Cookies from 'js-cookie';
 // const globalurl = 'http://localhost:8888';
 
 const globalurl = 'https://coffee-iota-lake.vercel.app'
-// const globalurl = "https://everything-indian-backend.vercel.app";
 
-// const globalurl = "https://everythingindian-backend.onrender.com"
 
 axios.defaults.baseURL = globalurl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -19,12 +17,14 @@ export const isAuthTokenPresent = () => {
     return Cookies.get('auth_token') !== undefined;
 };
 
-export const setUserDetails = (details)=>{
-  Cookies.set('details',details,{ expires: 1 / 96 });
-}
-export const getUserDetails = ()=>{
-  return Cookies.get('details') || null;
-}
+// Function to store user details in cookies
+export const setUserDetails = (details) => {
+  Cookies.set('details', JSON.stringify(details), { expires: 1 / 96 }); // 15 minutes expiry
+};
+export const getUserDetails = () => {
+  const details = Cookies.get('details');
+  return details ? JSON.parse(details) : null; // Return parsed object or null if not available
+};
 
 export const setAuthHeader = (token) => {
   Cookies.set('auth_token', token, { expires: 1 / 96 });

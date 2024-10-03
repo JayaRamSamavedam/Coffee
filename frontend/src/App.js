@@ -11,7 +11,7 @@ export const UserContext = createContext();
 
 function App() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ loggedIn: isAuthTokenPresent(), details: getUserDetails() });
+  const [user, setUser] = useState({ loggedIn: isAuthTokenPresent(), details: getUserDetails()});
   const [visible,setvisible] = useState(false);
   const [redirectPath, setRedirectPath] = useState("/");
   return (

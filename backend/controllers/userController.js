@@ -9,7 +9,9 @@ import userotp from "../schema/userOtp.js";
 import jwt from "jsonwebtoken"
 // import { error } from "winston";
 // const jwt = require("jsonwebtoken");
-  
+
+import Log from "../schema/logSchema.js";
+
 const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET;
 

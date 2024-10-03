@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const globalurl = 'http://localhost:8888';
+// const globalurl = 'http://localhost:8888';
 
-// const globalurl = 'https://coffee-iota-lake.vercel.app'
+const globalurl = 'https://coffee-iota-lake.vercel.app'
 
 
 axios.defaults.baseURL = globalurl;

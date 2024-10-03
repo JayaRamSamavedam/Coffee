@@ -368,21 +368,27 @@ catch(error){
 }
 export const getAllOrders = async (req,res)=>{
   try{
-    const orders = await Order.find();
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 orders per page
+
+    // Calculate total number of orders and pages
+    const totalOrders = await Order.countDocuments();
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const orders = await Order.find().skip((page - 1) * limit)
+      .limit(limit);
     if(!orders){
       return res.status(400).json({error:"orders not found"});
     }
-    const updatedOrders = orders.map(order => {
-      const updatedOrder = order.toObject();
-      updatedOrder.items = updatedOrder.items.map(item => {
-          item.price = item.price * req.Currency;
-          return item;
-      });
-      updatedOrder.totalAmount = updatedOrder.items.reduce((total, item) => total + item.price, 0);
-      return updatedOrder;
-  });
-
-    return res.status(200).json(updatedOrders);
+    
+    return res.status(200).json({
+      orders: orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
+    // return res.status(200).json();
   }
   catch{
     return res.status(500).json(error);

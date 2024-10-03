@@ -24,7 +24,7 @@ const AllOrdersPage = () => {
   const fetchOrders = async (page) => {
     setLoading(true);
     try {
-      const response = await RequestParams('GET', '/orders/getorders', { page, limit: pageSize });
+      const response = await RequestParams('GET', '/admin/getallorders', { page, limit: pageSize });
       setOrders(response.data.orders);
       setTotalOrders(response.data.totalOrders); // Total orders to manage pagination
       setCurrentPage(page);

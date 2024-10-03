@@ -22,7 +22,7 @@ export const getAllLogs = async (req, res) => {
 
     // Fetch logs with pagination and sort them by the most recent
     const logs = await Log.find()
-      .sort({ createdAt: -1 })
+    .sort({ createdAt: -1 }) 
       .skip((page - 1) * limit)
       .limit(limit);
 

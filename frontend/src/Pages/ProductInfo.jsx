@@ -19,7 +19,7 @@ const ProductInfo = () => {
   const [newReview, setNewReview] = useState('');
   const [newRating, setNewRating] = useState(0);
   const hasFetchedProduct = useRef(false);
-  const [loading,setloading] = useEffect(false);
+  const [loading,setloading] = useState(false);
 
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editingReviewText, setEditingReviewText] = useState('');

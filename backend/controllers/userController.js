@@ -150,7 +150,7 @@ export const userLogin = async (req, res) => {
     //     `jwt=${refreshToken}; Secure; HttpOnly;`,
     // ]);
     res.setHeader("Access-Control-Allow-Credentials","true");
-res.status(200).json({ message: "User login successfully done", accessToken:accessToken ,user:{email:preuser.email,usergroup:preuser.userGroup} });
+res.status(200).json({ message: "User login successfully done", accessToken:accessToken ,user:{email:preuser.email,userGroup:preuser.userGroup} });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }

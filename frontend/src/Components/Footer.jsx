@@ -18,11 +18,6 @@ const Footer = () => {
           <ul className="text-lg flex items-center justify-center flex-col gap-7 md:flex-row md:gap-12 transition-all duration-500 py-16 mb-10 border-b border-[#8b6f4e] dark:border-[#3c2a1b]">
             <li>
               <a href="#" className="text-[#4b3f34] hover:text-[#7a5e48] dark:text-[#d3b89b] dark:hover:text-[#e5c1a8]">
-                Pagedone
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-[#4b3f34] hover:text-[#7a5e48] dark:text-[#d3b89b] dark:hover:text-[#e5c1a8]">
                 Products
               </a>
             </li>

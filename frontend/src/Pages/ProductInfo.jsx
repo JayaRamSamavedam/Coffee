@@ -19,6 +19,7 @@ const ProductInfo = () => {
   const [newReview, setNewReview] = useState('');
   const [newRating, setNewRating] = useState(0);
   const hasFetchedProduct = useRef(false);
+  const [loading,setloading] = useEffect(false);
 
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editingReviewText, setEditingReviewText] = useState('');
@@ -26,8 +27,10 @@ const ProductInfo = () => {
 
   const fetchProduct = async () => {
     try {
+      setloading(true);
       const response = await Request("GET", `/prod/getByID/${id}`);
       setProduct(response.data);
+      setloading(false);
       hasFetchedProduct.current = true;
     } catch (error) {
       toast.error('Product not found');
@@ -43,7 +46,9 @@ const ProductInfo = () => {
 
   const fetchReviews = async () => {
     try {
+      setloading(true);
       const response = await Request('GET', `/prod/getByProduct/${product.productId}`);
+     setloading(false);
       if (response.status === 200) {
         setReviews(response.data.review || []);
         if (response.data.error) {
@@ -60,17 +65,20 @@ const ProductInfo = () => {
       setvisible(true);
       setRedirectPath(location);
     } else {
+
       if (!newRating || !newReview.trim()) {
         toast.error('Please provide both a rating and a review text');
         return;
       }
       try {
+        setloading(true);
         const response = await Request('POST', '/user/create-review', {
           email: user.email,
           productId: product.productId,
           text: newReview,
           rating: newRating,
         });
+        setloading(false);
         if (response.status === 200) {
           toast.success('Review added');
           fetchReviews();
@@ -95,6 +103,7 @@ const ProductInfo = () => {
       setRedirectPath(location);
     } else {
       try {
+        setloading(true);
         const response = await Request('POST', '/user/editreview', {
           id: reviewId,
           email: user.details.email,
@@ -102,6 +111,7 @@ const ProductInfo = () => {
           text: newText,
           rating: newRating,
         });
+        setloading(false);
         if (response.status === 200) {
           toast.success('Review updated');
           fetchReviews();
@@ -121,11 +131,13 @@ const ProductInfo = () => {
       setRedirectPath(location);
     } else {
       try {
+        setloading(true);
         const response = await Request('POST', '/user/delete-review', {
           email: user.details.email,
           productId: product.productId,
           id: reviewId,
         });
+        setloading(false);
         if (response.status === 200) {
           toast.success('Review deleted');
           fetchReviews();
@@ -142,7 +154,9 @@ const ProductInfo = () => {
       setRedirectPath(location);
     } else {
       try {
+        setloading(true)
         const response = await Request('POST', `/prod/addfav/`, { productId: product.productId });
+       setloading(false)
         if (response.status === 200) {
           toast.success('Product added to favourites');
           navigate("/wish-list", { replace: true });
@@ -175,7 +189,16 @@ const ProductInfo = () => {
       }
     }
   };
-
+  if (loading) {
+    return (
+      <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+        <span className="sr-only">Loading...</span>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto p-4">
       {product && (

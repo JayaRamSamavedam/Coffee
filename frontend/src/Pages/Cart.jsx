@@ -87,9 +87,12 @@ const Cart = () => {
             <h1 className="text-4xl font-bold text-center mb-8">Your Cart</h1>
 
             {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <p>Loading cart...</p>
-                </div>
+                <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+                <span className="sr-only">Loading...</span>
+                <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+              </div>
             ) : cartItems.length === 0 ? ( // Handle empty cart case
                 <div className="flex justify-center items-center h-64">
                     <p className="text-xl text-gray-600">Your cart is empty</p>

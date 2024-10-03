@@ -104,7 +104,16 @@ const Checkout = () => {
       setLoading(false);
     }
   };
-
+  if (loading) {
+    return (
+      <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+        <span className="sr-only">Loading...</span>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">

@@ -13,6 +13,7 @@ const Filter = () => {
 
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [loading,setloading]  =useState(false);
   const [totalProducts, setTotalProducts] = useState(0); // Track total number of products
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [pageSize] = useState(6); // Products per page
@@ -75,14 +76,17 @@ const Filter = () => {
   };
 
   const fetchProducts = async (page = 1, pageSize = 6, customFilters = filters) => {
+    setloading(true);
     const response = await RequestParams("GET", "/prod/filter", {
       ...customFilters,
       page, // Send current page to the backend
       limit: pageSize, // Send page size (products per page) to the backend
     });
+    
 
     setProducts(response.data.products); // Set fetched products
     setTotalProducts(response.data.total); // Set total number of products for pagination
+    setloading(false);
   };
 
   const handleFilterChange = (field, value) => {
@@ -151,6 +155,16 @@ const Filter = () => {
     setShowFilters(!showFilters); // Toggle filter visibility
   };
 
+  if (loading) {
+    return (
+      <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+        <span className="sr-only">Loading...</span>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+      </div>
+    );
+  }
   return (
     <>
       <div style={{ left: '10px', }} className='p-5'>

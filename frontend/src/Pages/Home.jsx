@@ -31,6 +31,16 @@ const HomePage = () => {
     fetchProducts();
   }, [user.loggedIn]);
 
+  if (loading) {
+    return (
+      <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+        <span className="sr-only">Loading...</span>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+      </div>
+    );
+  }
   return (
     <div className="bg-[#f5f3f0] dark:bg-[#2a1a14] text-[#4b3f34] dark:text-[#d3b89b] min-h-screen">
       <div>

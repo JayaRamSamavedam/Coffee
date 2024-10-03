@@ -7,13 +7,16 @@ import BrandCard from '../Components/BrandCard';
 const Brands = () => {
   const [brand, setBrand] = useState([]);
 
+  const [loading,setLoading] = useState(false);
   useEffect(() => {
     // console.log(document.cookie)
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await Request("GET", "/prod/getallbrands");
         console.log(response.data)
         setBrand(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -26,6 +29,16 @@ const Brands = () => {
     setBrand(brand.filter(category => category.name !== brandname));
   };
 
+  if (loading) {
+    return (
+      <div className="flex space-x-2 justify-center items-center h-screen dark:invert">
+        <span className="sr-only">Loading...</span>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+      </div>
+    );
+  }
   return (
     <div>
       <h2>Brands</h2>
